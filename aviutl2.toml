@@ -1,0 +1,25 @@
+#:schema ./.aviutl2-cli/aviutl2.schema.json
+# 設定ファイルについては https://github.com/sevenc-nanashi/aviutl2-cli を参照してください。
+[project]
+id = "LayerGridView"
+name = "レイヤーグリッド表示"
+version = "0.1.0"
+
+[development]
+aviutl2_version = "latest"
+
+[artifacts.LayerGridView-obj2]
+build = "aulua build"
+destination = "Script/レイヤーグリッド表示.obj2"
+source = "script_out/レイヤーグリッド表示.obj2"
+
+[artifacts.LayerGridView-individual-anm2]
+build = "aulua build"
+destination = "Script/@レイヤーグリッド表示.anm2"
+source = "script_out/@レイヤーグリッド表示.anm2"
+
+[preview]
+
+[release]
+output_dir = "release"
+package_template = "package.txt"

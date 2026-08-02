@@ -1,0 +1,29 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/karoterra/aviutl2-aulua/refs/heads/main/schema/aulua.schema.json
+project:
+  variables:
+    NAME: レイヤーグリッド表示
+    VERSION: v0.1.0
+    AUTHOR: azurite
+build:
+  out_dir: script_out
+install:
+  out_dir: script_out
+scripts:
+  - name: レイヤーグリッド表示.obj2
+    sources:
+      - path: ./script/レイヤーグリッド表示.in.obj2
+        variables:
+          INFO: レイヤーグリッド表示
+          LABEL: 配置
+  - name: "@レイヤーグリッド表示.anm2"
+    sources:
+      - label: セル設定(個別)
+        path: ./script/セル設定(個別).in.anm2
+        variables:
+          INFO: セル設定(個別)
+          LABEL: 配置
+      - label: グリッドオフセット設定(個別)
+        path: ./script/グリッドオフセット設定(個別).in.anm2
+        variables:
+          INFO: グリッドオフセット設定(個別)
+          LABEL: 配置

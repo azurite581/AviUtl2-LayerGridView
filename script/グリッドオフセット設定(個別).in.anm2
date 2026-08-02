@@ -1,0 +1,20 @@
+--require:2005000
+--information:${INFO} ${VERSION} by ${AUTHOR}
+--label:${LABEL}
+---$value:対象列番号
+local target_col_index = {}
+
+---$track:列オフセット
+---min=-100
+---max=100
+---step=0.01
+local col_offset = 0
+
+---$value:対象行番号
+local target_row_index = {}
+
+---$track:行オフセット
+---min=-100
+---max=100
+---step=0.01
+local row_offset = 0
