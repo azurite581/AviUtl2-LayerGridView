@@ -18,6 +18,13 @@
 
 ## インストール
 
+次のいずれかの方法でインストールできます。
+
+### AviUtl2 カタログを使う（推奨）
+
+本スクリプトは [aviutl2-catalog](https://github.com/Neosku/aviutl2-catalog) に登録済みです。
+メインメニュー → パッケージ一覧 → スクリプト → レイヤーグリッド表示 からインストールしてください。
+
 ### 手動インストール
 
 [Releases](https://github.com/azurite581/AviUtl2-LayerGridView/releases/latest) から `LayerGridView_v{version}.au2pkg.zip` をダウンロードし、AviUtl2 のプレビューにドラッグ&ドロップしてください。
