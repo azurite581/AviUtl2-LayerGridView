@@ -2,7 +2,7 @@
 project:
   variables:
     NAME: レイヤーグリッド表示
-    VERSION: v0.1.0
+    VERSION: v0.2.0
     AUTHOR: azurite
     REQUIRE_AVIUTL_VERSION: "2010800"
 build:
