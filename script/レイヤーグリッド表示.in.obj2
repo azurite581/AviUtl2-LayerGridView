@@ -15,7 +15,7 @@ local h = 720
 
 ---$checksection:スクリーンサイズに合わせる
 ---multi_section=false
-local screen_size = true
+local screen_size = false
 
 ---$track:X個数
 ---min=1
@@ -212,7 +212,7 @@ local label_hidden_output = true
 
 --group
 --group:レイヤー設定,true
----$check:読み込み
+---$check:レイヤー上のオブジェクトを読み込む
 local load_layer = true
 
 ---$check:セル番号を対象レイヤーにする
