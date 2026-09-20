@@ -29,12 +29,14 @@ local nx = 3
 ---step=1
 local ny = 3
 
+---$checksection:結合
+---multi_section=false
+local is_merge_enabled = false
+
 ---$value:結合リスト
 local merge = {{1,1}}
 
----$checksection:結合
----multi_section=false
-local is_merge_enabled = true
+--hide@merge:is_merge_enabled==0
 
 --group
 --group:グリッドオフセットの設定,false
@@ -70,6 +72,8 @@ local override_cell_col = false
 
 ---$color:セル色
 local cell_col = 0x000000
+
+--hide@cell_col:override_cell_col==0
 
 ---$track:セル透明度
 ---min=0
@@ -157,6 +161,8 @@ local sampler_mode = 0
 
 ---$color:領域外の色
 local bg_col = 0xffffff
+
+--hide@bg_col:sampler_mode~=1
 
 --group
 --group:ラベル設定,false
@@ -387,6 +393,7 @@ for index = 0, effect1_count - 1, 1 do
         item_tables[index] = {
             -- セル
             override_cell_settings  = parse_check(obj.getvalue(effect_name, "セル設定を上書き")) or false,
+            override_cell_col       = parse_check(obj.getvalue(effect_name, "セル色を上書き")) or false,
             cell_col                 = parse_color(obj.getvalue(effect_name, "セル色")),
             cell_transparent         = obj.getvalue(effect_name, "セル透明度"),
             round_unit               = parse_list(unit_list, obj.getvalue(effect_name, "角丸の単位")) or 0,
@@ -694,7 +701,9 @@ obj.multiobject(cell_num, function()
 
             -- セルの設定
             if item.override_cell_settings then
-                t_cell_color = item.cell_col
+                if item.override_cell_col then
+                    t_cell_color = item.cell_col
+                end
                 t_cell_transparent = (100 - item.cell_transparent) / 100
                 t_border_unit = item.border_unit
                 if t_border_unit == 1 then

@@ -8,8 +8,13 @@ local item_index = {}
 ---$check:セル設定を上書き
 local override_cell_settings = false
 
+---$check:セル色を上書き
+local override_cell_col = false
+
 ---$color:セル色
 local cell_col = 0x000000
+
+--hide@cell_col:override_cell_col==0
 
 ---$track:セル透明度
 ---min=0
@@ -100,6 +105,8 @@ local sampler_mode = 0
 
 ---$color:領域外の色
 local item_bg_col = 0xffffff
+
+--hide@item_bg_col:sampler_mode~=1
 
 --group
 --group:ラベル設定,false
