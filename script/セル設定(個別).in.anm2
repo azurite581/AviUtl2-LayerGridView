@@ -1,4 +1,4 @@
---require:2005000
+--require:${REQUIRE_AVIUTL_VERSION}
 --information:${INFO} ${VERSION} by ${AUTHOR}
 --label:${LABEL}
 ---$value:セル番号

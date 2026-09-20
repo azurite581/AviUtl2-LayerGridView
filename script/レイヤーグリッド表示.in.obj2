@@ -1,4 +1,4 @@
---require:2005000
+--require:${REQUIRE_AVIUTL_VERSION}
 --information:${INFO} ${VERSION} by ${AUTHOR}
 --group:グリッド設定,true
 ---$track:幅
@@ -37,6 +37,9 @@ local is_merge_enabled = false
 local merge = {{1,1}}
 
 --hide@merge:is_merge_enabled==0
+
+---$checksection:セル毎に個別オブジェクト
+local individual_objects_per_cell = false
 
 --group
 --group:グリッドオフセットの設定,false
@@ -645,163 +648,164 @@ end
 
 local draw = {}
 local obj_layer = obj.layer
-obj.multiobject(cell_num, function()
-    local index = obj.index + 1
-    local cell_index = cell_owner[index]
 
-    if cell_index == nil then return end
-    if draw[cell_index] == nil then
-        draw[cell_index] = true
-        local cell_w, cell_h = cell_size[index][1], cell_size[index][2]
-        local cell_x, cell_y = item_center[index][1], item_center[index][2]
+if individual_objects_per_cell then
+    obj.multiobject(cell_num, function()
+        local index = obj.index + 1
+        local cell_index = cell_owner[index]
 
-        if cell_size_log_enable then
-            print(string.format(
-                "[セル%d] サイズ: %dx%dpx, 割合: %.1f%%:%.1f%%",
-                cell_index,
-                cell_w, cell_h,
-                cell_w / w * 100,
-                cell_h / h * 100)
-            )
-        end
+        if cell_index == nil then return end
+        if draw[cell_index] == nil then
+            draw[cell_index] = true
+            local cell_w, cell_h = cell_size[index][1], cell_size[index][2]
+            local cell_x, cell_y = item_center[index][1], item_center[index][2]
 
-        -- セルの設定
-        local t_cell_color = cell_color[index]
-        local t_cell_transparent = (100 - cell_transparent) / 100
-        local t_border_unit = item_border_unit
-        local t_border = item_border
-        local t_border_r, t_border_g, t_border_b = border_col_r, border_col_g, border_col_b
-        local t_border_transparent = item_border_transparent
-        local t_round_unit = item_round_unit
-        local t_round = item_round
-
-        -- セル内オブジェクトの設定
-        local t_item_scale_mode = item_scale_mode
-        local t_item_x = item_x
-        local t_item_y = item_y
-        local t_item_scale = item_scale
-        local t_sampler_mode = sampler_mode
-        local t_bg_col_r, t_bg_col_g, t_bg_col_b = bg_col_r, bg_col_g, bg_col_b
-        local t_m00, t_m01, t_m10, t_m11 = m00, m01, m10, m11
-        local t_item_transparent = item_transparent
-
-        -- ラベルの設定
-        local t_label_x = label_x
-        local t_label_y = label_y
-        local t_label_font = label_font
-        local t_label_text_deco = label_text_deco
-        local t_label_size = label_size
-        local t_label_text_col = label_text_col
-        local t_label_outer_col = label_outer_col
-        local t_show_label = show_label
-
-        -- 各設定を上書き
-        if item_tables[index] ~= nil then
-            local item = item_tables[index]
+            if cell_size_log_enable then
+                print(string.format(
+                    "[セル%d] サイズ: %dx%dpx, 割合: %.1f%%:%.1f%%",
+                    cell_index,
+                    cell_w, cell_h,
+                    cell_w / w * 100,
+                    cell_h / h * 100)
+                )
+            end
 
             -- セルの設定
-            if item.override_cell_settings then
-                if item.override_cell_col then
-                    t_cell_color = item.cell_col
-                end
-                t_cell_transparent = (100 - item.cell_transparent) / 100
-                t_border_unit = item.border_unit
-                if t_border_unit == 1 then
-                    t_border = item.border / 100
-                else
-                    t_border = item.border
-                end
-                t_border_r, t_border_g, t_border_b = norm_rgb(item.border_col)
-                t_border_transparent = (100 - item.border_transparent) / 100
-                t_round_unit = item.round_unit
-                if t_round_unit == 1 then
-                    t_round = math.min(item.round, 100) / 100
-                else
-                    t_round = item.round
-                end
-            end
+            local t_cell_color = cell_color[index]
+            local t_cell_transparent = (100 - cell_transparent) / 100
+            local t_border_unit = item_border_unit
+            local t_border = item_border
+            local t_border_r, t_border_g, t_border_b = border_col_r, border_col_g, border_col_b
+            local t_border_transparent = item_border_transparent
+            local t_round_unit = item_round_unit
+            local t_round = item_round
 
             -- セル内オブジェクトの設定
-            if item.override_item_settings then
-                t_item_scale_mode = item.scale_type
-                t_item_x = item.x / 100
-                t_item_y = item.y / 100
-                t_item_scale = item.scale / 100
-                t_sampler_mode = item.sampler_mode
-                t_bg_col_r, t_bg_col_g, t_bg_col_b = norm_rgb(item.bg_col)
-                t_m00, t_m01, t_m10, t_m11 = rotate(item.angle)
-                t_item_transparent = (100 - item.transparent) / 100
-            end
+            local t_item_scale_mode = item_scale_mode
+            local t_item_x = item_x
+            local t_item_y = item_y
+            local t_item_scale = item_scale
+            local t_sampler_mode = sampler_mode
+            local t_bg_col_r, t_bg_col_g, t_bg_col_b = bg_col_r, bg_col_g, bg_col_b
+            local t_m00, t_m01, t_m10, t_m11 = m00, m01, m10, m11
+            local t_item_transparent = item_transparent
 
             -- ラベルの設定
-            if item.override_label_settings then
-                t_label_x = item.label_x
-                t_label_y = item.label_y
-                t_label_font = item.label_font
-                t_label_text_deco = item.label_text_deco
-                t_label_size = item.label_size
-                t_label_text_col = item.label_text_col
-                t_label_outer_col = item.label_outer_col
-                t_show_label = item.show_label
-            end
-        end
+            local t_label_x = label_x
+            local t_label_y = label_y
+            local t_label_font = label_font
+            local t_label_text_deco = label_text_deco
+            local t_label_size = label_size
+            local t_label_text_col = label_text_col
+            local t_label_outer_col = label_outer_col
+            local t_show_label = show_label
 
-        if math.floor(cell_w + 0.5) * math.floor(cell_h + 0.5) > 0 then
-            local layer_index = layer[cell_index]
-            -- レイヤー上のオブジェクトを読み込む
-            if load_layer and layer_index ~= nil and obj_layer ~= layer_index then
-                local loaded = obj.load("layer", layer_index, true)
+            -- 各設定を上書き
+            if item_tables[index] ~= nil then
+                local item = item_tables[index]
 
-                if loaded and obj.w * obj.h > 0 then
-                    local s = {cell_w / obj.w, cell_h / obj.h};
-                    local scale = 1
-                    if t_item_scale_mode == 0 then
-                        scale = math.min(s[1], s[2])
-                    elseif t_item_scale_mode == 1 then
-                        scale = math.max(s[1], s[2])
+                -- セルの設定
+                if item.override_cell_settings then
+                    if item.override_cell_col then
+                        t_cell_color = item.cell_col
                     end
-
-                    local samp = sampler[1]
-                    if t_sampler_mode == 0 or t_sampler_mode == 1 then
-                        samp = "clip"
+                    t_cell_transparent = (100 - item.cell_transparent) / 100
+                    t_border_unit = item.border_unit
+                    if t_border_unit == 1 then
+                        t_border = item.border / 100
                     else
-                        samp = sampler[t_sampler_mode]
+                        t_border = item.border
                     end
-                    if t_sampler_mode ~= 1 then
-                        t_bg_col_r, t_bg_col_g, t_bg_col_b = norm_rgb(t_cell_color)
+                    t_border_r, t_border_g, t_border_b = norm_rgb(item.border_col)
+                    t_border_transparent = (100 - item.border_transparent) / 100
+                    t_round_unit = item.round_unit
+                    if t_round_unit == 1 then
+                        t_round = math.min(item.round, 100) / 100
+                    else
+                        t_round = item.round
                     end
+                end
 
-                    obj.clearbuffer("tempbuffer", cell_w, cell_h)
-                    obj.pixelshader("sample_texture", "tempbuffer", {"object"}, {
-                        cell_w, cell_h, obj.w, obj.h,
-                        t_item_scale_mode, scale, t_sampler_mode, PAD,
-                        t_item_scale, t_item_transparent, t_item_x, t_item_y,
-                        t_bg_col_r, t_bg_col_g, t_bg_col_b, bg_col_a,
-                        t_m00, t_m01, PAD, PAD,
-                        t_m10, t_m11, PAD, PAD,
-                    }, "copy", samp)
+                -- セル内オブジェクトの設定
+                if item.override_item_settings then
+                    t_item_scale_mode = item.scale_type
+                    t_item_x = item.x / 100
+                    t_item_y = item.y / 100
+                    t_item_scale = item.scale / 100
+                    t_sampler_mode = item.sampler_mode
+                    t_bg_col_r, t_bg_col_g, t_bg_col_b = norm_rgb(item.bg_col)
+                    t_m00, t_m01, t_m10, t_m11 = rotate(item.angle)
+                    t_item_transparent = (100 - item.transparent) / 100
+                end
+
+                -- ラベルの設定
+                if item.override_label_settings then
+                    t_label_x = item.label_x
+                    t_label_y = item.label_y
+                    t_label_font = item.label_font
+                    t_label_text_deco = item.label_text_deco
+                    t_label_size = item.label_size
+                    t_label_text_col = item.label_text_col
+                    t_label_outer_col = item.label_outer_col
+                    t_show_label = item.show_label
+                end
+            end
+
+            if math.floor(cell_w + 0.5) * math.floor(cell_h + 0.5) > 0 then
+                local layer_index = layer[cell_index]
+                -- レイヤー上のオブジェクトを読み込む
+                if load_layer and layer_index ~= nil and obj_layer ~= layer_index then
+                    local loaded = obj.load("layer", layer_index, true)
+
+                    if loaded and obj.w * obj.h > 0 then
+                        local s = {cell_w / obj.w, cell_h / obj.h};
+                        local scale = 1
+                        if t_item_scale_mode == 0 then
+                            scale = math.min(s[1], s[2])
+                        elseif t_item_scale_mode == 1 then
+                            scale = math.max(s[1], s[2])
+                        end
+
+                        local samp = sampler[1]
+                        if t_sampler_mode == 0 or t_sampler_mode == 1 then
+                            samp = "clip"
+                        else
+                            samp = sampler[t_sampler_mode]
+                        end
+                        if t_sampler_mode ~= 1 then
+                            t_bg_col_r, t_bg_col_g, t_bg_col_b = norm_rgb(t_cell_color)
+                        end
+
+                        obj.clearbuffer("tempbuffer", cell_w, cell_h)
+                        obj.pixelshader("sample_texture", "tempbuffer", {"object"}, {
+                            cell_w, cell_h, obj.w, obj.h,
+                            t_item_scale_mode, scale, t_sampler_mode, PAD,
+                            t_item_scale, t_item_transparent, t_item_x, t_item_y,
+                            t_bg_col_r, t_bg_col_g, t_bg_col_b, bg_col_a,
+                            t_m00, t_m01, PAD, PAD,
+                            t_m10, t_m11, PAD, PAD,
+                        }, "copy", samp)
+                    else
+                        obj.clearbuffer("tempbuffer", cell_w, cell_h, t_cell_color)
+                        obj.pixelshader("alpha", "tempbuffer", {"tempbuffer"}, {t_cell_transparent})
+
+                        local load_failed_msg = "レイヤー"..tostring(layer_index).."のオブジェクトを読み込めませんでした"
+                        print("@warn", load_failed_msg)
+                    end
                 else
                     obj.clearbuffer("tempbuffer", cell_w, cell_h, t_cell_color)
                     obj.pixelshader("alpha", "tempbuffer", {"tempbuffer"}, {t_cell_transparent})
-
-                    local load_failed_msg = "レイヤー"..tostring(layer_index).."のオブジェクトを読み込めませんでした"
-                    print("@warn", load_failed_msg)
                 end
-            else
-                obj.clearbuffer("tempbuffer", cell_w, cell_h, t_cell_color)
-                obj.pixelshader("alpha", "tempbuffer", {"tempbuffer"}, {t_cell_transparent})
-            end
 
-            -- 角丸と枠の描画
-            obj.pixelshader("round_border", "tempbuffer", {"tempbuffer"}, {
-                cell_w, cell_h, t_round_unit, t_round,
-                t_border_unit, t_border, PAD, PAD,
-                t_border_r, t_border_g, t_border_b, t_border_transparent
-            }, "copy", "clip")
+                -- 角丸と枠の描画
+                obj.pixelshader("round_border", "tempbuffer", {"tempbuffer"}, {
+                    cell_w, cell_h, t_round_unit, t_round,
+                    t_border_unit, t_border, PAD, PAD,
+                    t_border_r, t_border_g, t_border_b, t_border_transparent
+                }, "copy", "clip")
 
-            -- ラベルの描画
-            if not label_hidden_output or obj.getinfo("saving") ~= true then
-                if t_show_label then
+                -- ラベルの描画
+                if (not label_hidden_output or obj.getinfo("saving") ~= true) and t_show_label then
                     local label_text = tostring(cell_index)
                     local t_label_cx = (t_label_x + 100) / 2 / 100
                     local t_label_cy = (t_label_y + 100) / 2 / 100
@@ -822,17 +826,211 @@ obj.multiobject(cell_num, function()
                     obj.setoption("drawtarget", "tempbuffer")
                     obj.draw(lx, ly)
                 end
+            else
+                obj.clearbuffer("tempbuffer")
             end
-        else
+
+            obj.copybuffer("object", "tempbuffer")
             obj.clearbuffer("tempbuffer")
+            obj.ox = cell_x
+            obj.oy = cell_y
+        else
+            obj.clearbuffer("object")
         end
+    end)
 
-        obj.copybuffer("object", "tempbuffer")
-        obj.clearbuffer("tempbuffer")
+    obj.ox = 0
+    obj.oy = 0
+    obj.clearbuffer("tempbuffer", w, h)
+    obj.setoption("drawtarget", "tempbuffer")
+    obj.draw()
+    obj.copybuffer("object", "tempbuffer")
+else
+    local cache_str = "cache:layer_grid_view_cell"
+    obj.clearbuffer("tempbuffer", w, h)
+    obj.setoption("drawtarget", "tempbuffer")
 
-        obj.ox = cell_x
-        obj.oy = cell_y
-    else
-        obj.clearbuffer("object")
+    for index = 1, cell_num do
+        local cell_index = cell_owner[index]
+
+        if cell_index == nil then return end
+        if draw[cell_index] == nil then
+            draw[cell_index] = true
+            local cell_w, cell_h = cell_size[index][1], cell_size[index][2]
+            local cell_x, cell_y = item_center[index][1], item_center[index][2]
+
+            if cell_size_log_enable then
+                print(string.format(
+                    "[セル%d] サイズ: %dx%dpx, 割合: %.1f%%:%.1f%%",
+                    cell_index,
+                    cell_w, cell_h,
+                    cell_w / w * 100,
+                    cell_h / h * 100)
+                )
+            end
+
+            -- セルの設定
+            local t_cell_color = cell_color[index]
+            local t_cell_transparent = (100 - cell_transparent) / 100
+            local t_border_unit = item_border_unit
+            local t_border = item_border
+            local t_border_r, t_border_g, t_border_b = border_col_r, border_col_g, border_col_b
+            local t_border_transparent = item_border_transparent
+            local t_round_unit = item_round_unit
+            local t_round = item_round
+
+            -- セル内オブジェクトの設定
+            local t_item_scale_mode = item_scale_mode
+            local t_item_x = item_x
+            local t_item_y = item_y
+            local t_item_scale = item_scale
+            local t_sampler_mode = sampler_mode
+            local t_bg_col_r, t_bg_col_g, t_bg_col_b = bg_col_r, bg_col_g, bg_col_b
+            local t_m00, t_m01, t_m10, t_m11 = m00, m01, m10, m11
+            local t_item_transparent = item_transparent
+
+            -- ラベルの設定
+            local t_label_x = label_x
+            local t_label_y = label_y
+            local t_label_font = label_font
+            local t_label_text_deco = label_text_deco
+            local t_label_size = label_size
+            local t_label_text_col = label_text_col
+            local t_label_outer_col = label_outer_col
+            local t_show_label = show_label
+
+            -- 各設定を上書き
+            if item_tables[index] ~= nil then
+                local item = item_tables[index]
+
+                -- セルの設定
+                if item.override_cell_settings then
+                    if item.override_cell_col then
+                        t_cell_color = item.cell_col
+                    end
+                    t_cell_transparent = (100 - item.cell_transparent) / 100
+                    t_border_unit = item.border_unit
+                    if t_border_unit == 1 then
+                        t_border = item.border / 100
+                    else
+                        t_border = item.border
+                    end
+                    t_border_r, t_border_g, t_border_b = norm_rgb(item.border_col)
+                    t_border_transparent = (100 - item.border_transparent) / 100
+                    t_round_unit = item.round_unit
+                    if t_round_unit == 1 then
+                        t_round = math.min(item.round, 100) / 100
+                    else
+                        t_round = item.round
+                    end
+                end
+
+                -- セル内オブジェクトの設定
+                if item.override_item_settings then
+                    t_item_scale_mode = item.scale_type
+                    t_item_x = item.x / 100
+                    t_item_y = item.y / 100
+                    t_item_scale = item.scale / 100
+                    t_sampler_mode = item.sampler_mode
+                    t_bg_col_r, t_bg_col_g, t_bg_col_b = norm_rgb(item.bg_col)
+                    t_m00, t_m01, t_m10, t_m11 = rotate(item.angle)
+                    t_item_transparent = (100 - item.transparent) / 100
+                end
+
+                -- ラベルの設定
+                if item.override_label_settings then
+                    t_label_x = item.label_x
+                    t_label_y = item.label_y
+                    t_label_font = item.label_font
+                    t_label_text_deco = item.label_text_deco
+                    t_label_size = item.label_size
+                    t_label_text_col = item.label_text_col
+                    t_label_outer_col = item.label_outer_col
+                    t_show_label = item.show_label
+                end
+            end
+
+            if math.floor(cell_w + 0.5) * math.floor(cell_h + 0.5) > 0 then
+                local layer_index = layer[cell_index]
+                -- レイヤー上のオブジェクトを読み込む
+                if load_layer and layer_index ~= nil and obj_layer ~= layer_index then
+                    local loaded = obj.load("layer", layer_index, true)
+
+                    if loaded and obj.w * obj.h > 0 then
+                        local s = {cell_w / obj.w, cell_h / obj.h};
+                        local scale = 1
+                        if t_item_scale_mode == 0 then
+                            scale = math.min(s[1], s[2])
+                        elseif t_item_scale_mode == 1 then
+                            scale = math.max(s[1], s[2])
+                        end
+
+                        local samp = sampler[1]
+                        if t_sampler_mode == 0 or t_sampler_mode == 1 then
+                            samp = "clip"
+                        else
+                            samp = sampler[t_sampler_mode]
+                        end
+                        if t_sampler_mode ~= 1 then
+                            t_bg_col_r, t_bg_col_g, t_bg_col_b = norm_rgb(t_cell_color)
+                        end
+
+                        obj.clearbuffer(cache_str, cell_w, cell_h)
+                        obj.pixelshader("sample_texture", cache_str, {"object"}, {
+                            cell_w, cell_h, obj.w, obj.h,
+                            t_item_scale_mode, scale, t_sampler_mode, PAD,
+                            t_item_scale, t_item_transparent, t_item_x, t_item_y,
+                            t_bg_col_r, t_bg_col_g, t_bg_col_b, bg_col_a,
+                            t_m00, t_m01, PAD, PAD,
+                            t_m10, t_m11, PAD, PAD,
+                        }, "copy", samp)
+                    else
+                        obj.clearbuffer(cache_str, cell_w, cell_h, t_cell_color)
+                        obj.pixelshader("alpha", cache_str, {cache_str}, {t_cell_transparent})
+
+                        local load_failed_msg = "レイヤー"..tostring(layer_index).."のオブジェクトを読み込めませんでした"
+                        print("@warn", load_failed_msg)
+                    end
+                else
+                    obj.clearbuffer(cache_str, cell_w, cell_h, t_cell_color)
+                    obj.pixelshader("alpha", cache_str, {cache_str}, {t_cell_transparent})
+                end
+
+                -- 角丸と枠の描画
+                obj.pixelshader("round_border", cache_str, {cache_str}, {
+                    cell_w, cell_h, t_round_unit, t_round,
+                    t_border_unit, t_border, PAD, PAD,
+                    t_border_r, t_border_g, t_border_b, t_border_transparent
+                }, "copy", "clip")
+
+                -- セルの描画
+                obj.copybuffer("object", cache_str)
+                obj.draw(cell_x, cell_y)
+
+                -- ラベルの描画
+                if (not label_hidden_output or obj.getinfo("saving") ~= true) and t_show_label then
+                    local label_text = tostring(cell_index)
+                    local t_label_cx = (t_label_x + 100) / 2 / 100
+                    local t_label_cy = (t_label_y + 100) / 2 / 100
+
+                    local px0, py0, px1, py1 = -cell_w / 2, -cell_h / 2, cell_w / 2, cell_h / 2
+                    local anchor_x = linear(px0, px1, t_label_cx)
+                    local anchor_y = linear(py0, py1, t_label_cy)
+
+                    local max_font_size = calc_max_font_size("000", t_label_font, t_label_text_deco, math.min(cell_w, cell_h))
+                    t_label_size = math.min(t_label_size, max_font_size)
+
+                    obj.setfont(t_label_font, t_label_size, t_label_text_deco, t_label_text_col, t_label_outer_col)
+                    local text_w, text_h = obj.load("text.layout", label_text)
+                    obj.load("text", label_text)
+
+                    local lx = anchor_x - (t_label_x / 100) * text_w / 2
+                    local ly = anchor_y - (t_label_y / 100) * text_h / 2
+                    obj.draw(cell_x + lx, cell_y + ly)
+                end
+            end
+        end
     end
-end)
+
+    obj.copybuffer("object", "tempbuffer")
+end
