@@ -14,7 +14,7 @@
 
 [AviUtl ExEdit2](https://spring-fragrance.mints.ne.jp/aviutl/)
 
-- `2.1.10` 以降必須。`2.1.8` で動作確認済み。
+- `2.1.8` 以降必須。`2.1.10` で動作確認済み。
 
 ## インストール
 
