@@ -4,7 +4,7 @@ project:
     NAME: レイヤーグリッド表示
     VERSION: v0.2.0
     AUTHOR: azurite
-    REQUIRE_AVIUTL_VERSION: "2010800"
+    REQUIRE_AVIUTL2_VERSION: "2010800"
 build:
   out_dir: script_out
 install:

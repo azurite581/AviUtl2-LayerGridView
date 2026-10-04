@@ -1,4 +1,4 @@
---require:${REQUIRE_AVIUTL_VERSION}
+--require:${REQUIRE_AVIUTL2_VERSION}
 --information:${INFO} ${VERSION} by ${AUTHOR}
 --group:グリッド設定,true
 ---$track:幅
